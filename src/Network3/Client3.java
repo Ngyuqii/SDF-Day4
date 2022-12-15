@@ -1,47 +1,43 @@
-package Network3;
+package network3;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Client3 {
+
     public static void main(String[] args) {
-        int port = 1212;
+
         try {
-            Socket cs = new Socket ("localhost", 12000);
+            Socket skt = new Socket ("localhost", 12000);
 
-            //Get the I/O Stream
-            DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(cs.getOutputStream()));
+            //Output stream
+            DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(skt.getOutputStream()));
 
-            //Get client input from scanner
-            Scanner inputSc = new Scanner(System.in);
+            //Read a file and write to server
+            FileReader fr = new FileReader("src/network3/file.txt");
+            BufferedReader br = new BufferedReader(fr);
+
             String line;
-            while (( line = inputSc.nextLine()) != null) {
-                if (line.equalsIgnoreCase("close")) {
-                    System.out.println("Exit from shell");
-                    dos.writeUTF("close");
-                    dos.flush();
-                    break;
-                }
-
+            while (null != (line = br.readLine())) {
                 dos.writeUTF(line);
                 dos.flush();
-                System.out.println("Message sent to client >" + line);
-          java  }
+            }
 
-            //Close the socket and scanner
-            cs.close();
-            inputSc.close();
-
-        } catch(UnknownHostException e) {
-            System.out.println("Unable to reach the host.");
-        } catch (IOException e) {
-            System.out.println("IO Error");
-
+            fr.close(); //close the file
+            skt.close(); //close the socket 
         }
+        catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
     
 }

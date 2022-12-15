@@ -1,4 +1,4 @@
-package Network2;
+package network2;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -9,8 +9,11 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class Client2 {
+    
     public static void main(String[] args) {
+
         int port = 9999;
+
         try {
             Socket cs = new Socket ("localhost", port);
 
@@ -21,30 +24,32 @@ public class Client2 {
 
             //Get client input from scanner
             Scanner inputSc = new Scanner(System.in);
+
             String line;
-            while (( line = inputSc.nextLine()) != null) {
+            while ((line = inputSc.nextLine()) != null) {
                 if (line.equalsIgnoreCase("close")) {
                     System.out.println("Exit from shell");
-                    dos.writeUTF("close");
+                    dos.writeUTF("Closing....");
                     dos.flush();
-                    break;
                 }
-
-                dos.writeUTF(line);
-                dos.flush();
-                System.out.println("Message sent to client >" + line);
+                else {
+                    dos.writeUTF(line);
+                    dos.flush();
+                    System.out.println("Message sent to client >" + line);
+                }
             }
 
             //Close the socket and scanner
-            cs.close();
             inputSc.close();
-
-        } catch(UnknownHostException e) {
-            System.out.println("Unable to reach the host.");
-        } catch (IOException e) {
-            System.out.println("IO Error");
-
+            cs.close();
         }
+        catch(UnknownHostException e) {
+            System.out.println("Unable to reach the host.");
+        }
+        catch (IOException e) {
+            System.out.println("IO Error");
+        }
+    
     }
     
 }

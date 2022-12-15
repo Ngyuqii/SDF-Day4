@@ -1,4 +1,4 @@
-package Network2;
+package network2;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -8,7 +8,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server2 {
+
     public static void main(String[] args) {
+
         System.out.println("Socket server: ");
         int port = 9999;
 
@@ -27,16 +29,18 @@ public class Server2 {
 
             //Server output
             while (!fromClient.equalsIgnoreCase("close") && fromClient != null) {    
-            System.out.println("Received message from client: "+ fromClient);
-            fromClient = dis.readUTF(); //read the next line from input stream
+                System.out.println("Received message from client: "+ fromClient);
+                fromClient = dis.readUTF(); //read the next line from input stream
             }
-
+            
             System.out.println("Closing socket");
             skt.close();
             svr.close();
-
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
             System.out.println("IO Error");
         }
+    
     }
+
 }

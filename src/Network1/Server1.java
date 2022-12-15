@@ -1,4 +1,4 @@
-package Network1;
+package network1;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -8,7 +8,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server1 {
+
     public static void main(String[] args) {
+
         System.out.println("Socket server: ");
         int port = 12345;
 
@@ -26,10 +28,12 @@ public class Server1 {
             System.out.println("Message received. >" + msg);
             
             skt.close();
-            svr.close(); //do I need to close the server?
-
-        } catch (IOException e) {
+            svr.close();
+        }
+        catch (IOException e) {
             System.out.println("IO Error");
         }
+    
     }
+
 }

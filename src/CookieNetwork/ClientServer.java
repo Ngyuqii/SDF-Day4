@@ -1,4 +1,4 @@
-package CookieNetwork;
+package cookienetwork;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -15,13 +15,14 @@ public class ClientServer {
     public static void main(String[] args) {
         
         /*
-        Server <program> <server> <port> <cookie-file.txt>
-        <java -cp fortunecookie.jar> <fc.Server> <12345> <cookie_file.txt>
-        Client <program> <client> <host> <port>
-        <java -cp fortunecookie.jar> <fc.Client> <locahost> <12345>
+        javac -sourcepath src -d classes src/cookienetwork/*.java
+        Server
+        java -cp classes cookienetwork.ClientServer server 12345 cookie_file.txt
+        Client
+        java -cp classes cookienetwork.ClientServer client localhost 12345
         */
         
-        String usage = """
+        String instructions = """
         Server
         <program> <server> <port> <cookie-file.txt>
         Client
@@ -30,7 +31,7 @@ public class ClientServer {
      
         if((args.length)!= 3) {
             System.out.println("Incorrect inputs. Please check the following usage.");
-            System.out.println(usage);
+            System.out.println(instructions);
             return;
         }
         
@@ -38,57 +39,67 @@ public class ClientServer {
         if(type.equalsIgnoreCase("Server")) {
             int port = Integer.parseInt(args[1]);
             String fileName = args[2];
-            StartServer(port, fileName);
-        } else if (type.equalsIgnoreCase("Client")) {
+            StartServer(port, fileName); //call method StartServer
+        }
+        else if (type.equalsIgnoreCase("Client")) {
             String hostName = args[1];
             int port = Integer.parseInt(args[2]);
-            StartClient(hostName, port);
-        } else {
+            StartClient(hostName, port); //call method StartClient
+        }
+        else {
             System.out.println("Incorrect inputs.");
         }
+
     }
 
+    //Method to launch Server
     public static void StartServer(int port, String fileName) {
-        ServerSocket svrskt;
+  
         try {
-            svrskt = new ServerSocket(port);
+            ServerSocket svrskt = new ServerSocket(port);
             Socket socket = svrskt.accept();
 
-            //Server input and output stream
+            //Server I/O stream
             DataInputStream dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
             DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
             while (true) {
                 String fromClient = dis.readUTF();
 
-                if (fromClient.equalsIgnoreCase("exit")) {
+                if (fromClient.equalsIgnoreCase("close")) {
                     break;
                 }
-                System.out.println("Message from client: " + fromClient);
-                if (fromClient.equalsIgnoreCase("get-cookie")) {
+                else if (fromClient.equalsIgnoreCase("get-cookie")) {
+                    System.out.println("Message from Client: " + fromClient);
+
                     // Send a random cookie from the file
-                    dos.writeUTF("Dummy cookie..");
-                    // Implement this class
-                    // doc.writeUTF(new CookieFile().getRandomCookie())
+                    String cookie = CookieFile.GetRandomCookie(fileName);
+                    System.out.println("cookie-text " + cookie);
+                    dos.writeUTF(cookie);
                     dos.flush();
-                } else {
-                    // Send a msg, "Invalid command from server"
-                    dos.writeUTF("From server: Invalid Command");
+                }
+                else {
+                    System.out.println("Message from Client: " + fromClient);
+                    dos.writeUTF("From Server: Invalid Command");
                     dos.flush();
                 }
             }
-            socket.close();
 
-        } catch (IOException e) {
+            socket.close();
+            svrskt.close();
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }        
+    
     }
 
     public static void StartClient(String host, int port) {
+    
         try {
             Socket skt = new Socket(host, port);
             
-            //Client input and output stream
+            //Client I/O stream
             DataInputStream dis = new DataInputStream(new BufferedInputStream(skt.getInputStream()));
             DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(skt.getOutputStream()));
 
@@ -97,29 +108,31 @@ public class ClientServer {
 
             while (!stop) {
                 String line = sc.nextLine();
-                if (line.equalsIgnoreCase("Exit")) {
-                    dos.writeUTF("Exit");
+                if (line.equalsIgnoreCase("close")) {
+                    dos.writeUTF("Closing.");
                     dos.flush();
                     stop = true;
                     break;
                 }
-
-                dos.writeUTF(line);
-                dos.flush();
+                else {
+                    dos.writeUTF(line);
+                    dos.flush();
+                }
 
                 String fromServer = dis.readUTF();
-                System.out.println("Response from server !" + fromServer);
-
-                skt.close();
-                sc.close();
-            
+                System.out.println("Response from Server : " + fromServer);
             }
 
-        } catch (UnknownHostException e) {
+            sc.close();
+            skt.close();
+        }
+        catch (UnknownHostException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
         
     }
+
 }

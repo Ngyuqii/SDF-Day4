@@ -1,4 +1,4 @@
-package Network1;
+package network1;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -8,8 +8,11 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Client1 {
+
     public static void main(String[] args) {
+
         int port = 12345;
+
         try {
             Socket cs = new Socket ("localhost", port);
 
@@ -24,13 +27,14 @@ public class Client1 {
 
             //Close the socket
             cs.close();
-
-        } catch(UnknownHostException e) {
-            System.out.println("Unable to reach the host.");
-        } catch (IOException e) {
-            System.out.println("IO Error");
-
         }
+        catch(UnknownHostException e) {
+            System.out.println("Unable to reach the host.");
+        }
+        catch (IOException e) {
+            System.out.println("IO Error");
+        }
+
     }
     
 }
